@@ -1,4 +1,4 @@
-package logger
+package slogsimple
 
 import (
 	"io"

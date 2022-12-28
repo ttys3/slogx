@@ -1,11 +1,11 @@
-module github.com/ttys3/logger/tests
+module github.com/ttys3/slogsimple/tests
 
 go 1.19
 
-replace github.com/ttys3/logger => ../
+replace github.com/ttys3/slogsimple => ../
 
 require (
-	github.com/ttys3/logger v0.0.0-00010101000000-000000000000
+	github.com/ttys3/slogsimple v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.0
 	go.opentelemetry.io/otel v1.11.2
 	golang.org/x/exp v0.0.0-20221227203929-1b447090c38c

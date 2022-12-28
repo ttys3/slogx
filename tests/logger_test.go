@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/ttys3/logger"
+	"github.com/ttys3/slogsimple"
 	"net"
 	"os"
 	"testing"
@@ -28,7 +28,7 @@ func TestSlogWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	th := logger.NewHandlerOptions(slog.LevelInfo).NewJSONHandler(os.Stderr)
+	th := slogsimple.NewHandlerOptions(slog.LevelInfo).NewJSONHandler(os.Stderr)
 	slog.SetDefault(slog.New(th))
 
 	l := slog.With("name", "Al")
@@ -41,7 +41,7 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	th := logger.NewHandlerOptions(lvl).NewJSONHandler(os.Stderr)
+	th := slogsimple.NewHandlerOptions(lvl).NewJSONHandler(os.Stderr)
 	slog.SetDefault(slog.New(th))
 
 	l := slog.With("name", "Al")
@@ -54,7 +54,7 @@ func TestSlogWithAtomicLevelVar(t *testing.T) {
 }
 
 func TestNewLogHandler(t *testing.T) {
-	logger.InitDefault()
+	slogsimple.InitDefault()
 
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", net.ErrClosed, "status", 500)

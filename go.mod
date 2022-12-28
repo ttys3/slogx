@@ -1,4 +1,4 @@
-module github.com/ttys3/logger
+module github.com/ttys3/slogsimple
 
 go 1.19
 
