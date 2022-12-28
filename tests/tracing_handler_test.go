@@ -1,7 +1,8 @@
-package logger
+package tests
 
 import (
 	"context"
+	"github.com/ttys3/logger"
 	"github.com/ttys3/tracing-go"
 	"go.opentelemetry.io/otel"
 	"golang.org/x/exp/slog"
@@ -10,7 +11,7 @@ import (
 )
 
 func TestNewTracingHandler(t *testing.T) {
-	h := NewTracingHandler(NewHandler("info", "json", "stderr"))
+	h := logger.NewTracingHandler(logger.NewHandler("info", "json", "stderr"))
 	slog.SetDefault(slog.New(h))
 
 	ctx := context.Background()
