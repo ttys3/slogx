@@ -16,6 +16,11 @@ func SetDefault(level string, format string, output string) {
 	slog.SetDefault(slog.New(NewHandler(level, format, output)))
 }
 
+// New create a new *slog.Logger with tracing handler wrapper
+func New(level string, format string, output string) *slog.Logger {
+	return slog.New(NewTracingHandler(NewHandler(level, format, output)))
+}
+
 func NewHandler(level string, format string, output string) slog.Handler {
 	var w io.Writer
 	switch output {

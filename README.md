@@ -18,8 +18,9 @@ import (
 func main() {
 	// init a new slog json handler at info level with output to stderr
 	// and wrap it within a tracing handler
-	h := slogsimple.NewTracingHandler(slogsimple.NewHandler("info", "json", "stderr"))
-	slog.SetDefault(slog.New(h))
+	// short form of `logger := slog.New(slogsimple.NewTracingHandler(slogsimple.NewHandler("info", "json", "stderr")))`
+	logger := slogsimple.New("info", "json", "stderr")
+	slog.SetDefault(logger)
 
 	ctx := context.Background()
 
