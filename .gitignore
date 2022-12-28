@@ -1,0 +1,6 @@
+/.idea
+/go.work
+/go.work.sum
+/*.diff
+/*.patch
+/exp

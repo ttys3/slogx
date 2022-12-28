@@ -44,3 +44,23 @@ func main() {
 there's a bug in slog `With`,
 
 we need wait https://go.dev/cl/459615 to be merged.
+
+currently, we need to use a `go.work` to patch exp pkg in order to make the tests work.
+
+```go.work
+go 1.19
+
+use (
+	.
+	./exp
+	tests
+)
+```
+
+```shell
+git clone "https://go.googlesource.com/exp"
+cd exp
+curl -SsfL 'https://go-review.googlesource.com/changes/exp~459615/revisions/1/patch' | base64 -d > d7c9ec5.patch
+patch -p1 < ./d7c9ec5.patch
+go test -v ./tests/
+```
