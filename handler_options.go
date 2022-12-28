@@ -75,10 +75,10 @@ func NewHandlerOptions(level slog.Leveler) slog.HandlerOptions {
 		Level:     level,
 
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			if a.Key == slog.TimeKey {
-				// Remove time from the output.
-				return slog.Attr{}
-			}
+			// if a.Key == slog.TimeKey {
+			// 	// Remove time from the output.
+			// 	return slog.Attr{}
+			// }
 
 			if a.Key == slog.SourceKey {
 
