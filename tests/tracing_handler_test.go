@@ -11,8 +11,7 @@ import (
 )
 
 func TestNewTracingHandler(t *testing.T) {
-	// short form of `logger := slog.New(slogsimple.NewTracingHandler(slogsimple.NewHandler("info", "json", "stderr")))`
-	logger := slogsimple.New("info", "json", "stderr")
+	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime())
 	slog.SetDefault(logger)
 
 	ctx := context.Background()

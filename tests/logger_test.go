@@ -28,7 +28,7 @@ func TestSlogWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	th := slogsimple.NewHandlerOptions(slog.LevelInfo).NewJSONHandler(os.Stderr)
+	th := slogsimple.NewHandlerOptions(slog.LevelInfo, &slogsimple.HandlerOptions{}).NewJSONHandler(os.Stderr)
 	slog.SetDefault(slog.New(th))
 
 	l := slog.With("name", "Al")
@@ -41,7 +41,7 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	th := slogsimple.NewHandlerOptions(lvl).NewJSONHandler(os.Stderr)
+	th := slogsimple.NewHandlerOptions(lvl, &slogsimple.HandlerOptions{}).NewJSONHandler(os.Stderr)
 	slog.SetDefault(slog.New(th))
 
 	l := slog.With("name", "Al")
@@ -59,4 +59,13 @@ func TestNewLogHandler(t *testing.T) {
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", net.ErrClosed, "status", 500)
 	slog.Debug("this debug message should NOT shown up")
+}
+
+func TestSlogsimpleText(t *testing.T) {
+	slog.SetDefault(slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithFormat("text")))
+
+	l := slog.With("name", "Al")
+	l.Debug("this is debug message")
+	l.Info("hello", "age", 18)
+	slog.Error("oops", net.ErrClosed, "status", 500)
 }

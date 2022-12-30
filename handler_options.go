@@ -9,21 +9,31 @@ import (
 )
 
 func InitDefault() {
-	slog.SetDefault(slog.New(NewHandler("info", "json", "stderr")))
-}
-
-func SetDefault(level string, format string, output string) {
-	slog.SetDefault(slog.New(NewHandler(level, format, output)))
+	slog.SetDefault(slog.New(NewTracingHandler(NewHandler())))
 }
 
 // New create a new *slog.Logger with tracing handler wrapper
-func New(level string, format string, output string) *slog.Logger {
-	return slog.New(NewTracingHandler(NewHandler(level, format, output)))
+func New(opts ...Option) *slog.Logger {
+	return slog.New(NewTracingHandler(NewHandler(opts...)))
 }
 
-func NewHandler(level string, format string, output string) slog.Handler {
+func NewHandler(opts ...Option) slog.Handler {
+	options := options{
+		HandlerOptions: HandlerOptions{
+			DisableSource: false,
+			FullSource:    false,
+			DisableTime:   false,
+		},
+		Level:  "info",
+		Format: "json",
+		Output: "stderr",
+	}
+	for _, o := range opts {
+		o(&options)
+	}
+
 	var w io.Writer
-	switch output {
+	switch options.Output {
 	case "stdout":
 		w = os.Stdout
 	case "stderr":
@@ -32,7 +42,7 @@ func NewHandler(level string, format string, output string) slog.Handler {
 		w = io.Discard
 	default:
 		var err error
-		w, err = os.OpenFile(output, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+		w, err = os.OpenFile(options.Output, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
 		if err != nil {
 			slog.Error("failed to open log file, fallback to stderr", err)
 			w = os.Stderr
@@ -40,7 +50,7 @@ func NewHandler(level string, format string, output string) slog.Handler {
 	}
 
 	var theLevel slog.Level
-	switch level {
+	switch options.Level {
 	case "debug":
 		theLevel = slog.LevelDebug
 	case "info":
@@ -56,9 +66,9 @@ func NewHandler(level string, format string, output string) slog.Handler {
 	lvl := &slog.LevelVar{}
 	lvl.Set(theLevel)
 
-	h := NewHandlerOptions(lvl)
+	h := NewHandlerOptions(lvl, &options.HandlerOptions)
 	var th slog.Handler
-	switch format {
+	switch options.Format {
 	case "text":
 		th = h.NewTextHandler(w)
 	case "json":
@@ -69,17 +79,26 @@ func NewHandler(level string, format string, output string) slog.Handler {
 	return th
 }
 
-func NewHandlerOptions(level slog.Leveler) slog.HandlerOptions {
-	return slog.HandlerOptions{
-		AddSource: true,
+func NewHandlerOptions(level slog.Leveler, opt *HandlerOptions) slog.HandlerOptions {
+	ho := slog.HandlerOptions{
+		AddSource: !opt.DisableSource,
 		Level:     level,
+	}
 
-		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
-			// if a.Key == slog.TimeKey {
-			// 	// Remove time from the output.
-			// 	return slog.Attr{}
-			// }
+	if !opt.DisableTime && (opt.FullSource || opt.DisableSource) {
+		return ho
+	}
 
+	ho.ReplaceAttr = func(groups []string, a slog.Attr) slog.Attr {
+		if opt.DisableTime {
+			if a.Key == slog.TimeKey {
+				// Remove time from the output.
+				return slog.Attr{}
+			}
+		}
+
+		// handle short source file location
+		if !opt.DisableSource && !opt.FullSource {
 			if a.Key == slog.SourceKey {
 
 				file := a.Value.String()
@@ -110,7 +129,9 @@ func NewHandlerOptions(level slog.Leveler) slog.HandlerOptions {
 					Value: slog.StringValue(file),
 				}
 			}
-			return a
-		},
+		}
+
+		return a
 	}
+	return ho
 }
