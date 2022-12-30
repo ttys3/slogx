@@ -18,7 +18,7 @@ import (
 func main() {
 	// init a new slog json handler at info level with output to stderr
 	// and wrap it within a tracing handler
-	logger := slogsimple.New()
+	logger := slogsimple.New(slogsimple.WithTracing())
 	slog.SetDefault(logger)
 
 	ctx := context.Background()

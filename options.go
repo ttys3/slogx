@@ -13,9 +13,10 @@ type HandlerOptions struct {
 type options struct {
 	HandlerOptions
 
-	Level  string // debug, info, warn, error
-	Format string // json, text
-	Output string // stdout, stderr, discard, or a file path
+	Level   string // debug, info, warn, error
+	Format  string // json, text
+	Output  string // stdout, stderr, discard, or a file path
+	Tracing bool   // enable tracing feature
 }
 
 func WithDisableSource() Option {
@@ -55,4 +56,8 @@ func WithOutput(output string) Option {
 		}
 		o.Output = output
 	}
+}
+
+func WithTracing() Option {
+	return func(o *options) { o.Tracing = true }
 }

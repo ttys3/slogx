@@ -9,16 +9,12 @@ import (
 )
 
 func InitDefault() {
-	slog.SetDefault(slog.New(NewTracingHandler(NewHandler())))
+	slog.SetDefault(slog.New(NewTracingHandler(NewHandler(&options{}))))
 }
 
 // New create a new *slog.Logger with tracing handler wrapper
 func New(opts ...Option) *slog.Logger {
-	return slog.New(NewTracingHandler(NewHandler(opts...)))
-}
-
-func NewHandler(opts ...Option) slog.Handler {
-	options := options{
+	options := &options{
 		HandlerOptions: HandlerOptions{
 			DisableSource: false,
 			FullSource:    false,
@@ -29,9 +25,17 @@ func NewHandler(opts ...Option) slog.Handler {
 		Output: "stderr",
 	}
 	for _, o := range opts {
-		o(&options)
+		o(options)
 	}
 
+	h := NewHandler(options)
+	if options.Tracing {
+		h = NewTracingHandler(h)
+	}
+	return slog.New(h)
+}
+
+func NewHandler(options *options) slog.Handler {
 	var w io.Writer
 	switch options.Output {
 	case "stdout":

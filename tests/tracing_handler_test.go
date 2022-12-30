@@ -11,11 +11,21 @@ import (
 )
 
 func TestNewTracingHandler(t *testing.T) {
+	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime(), slogsimple.WithTracing())
+	slog.SetDefault(logger)
+
+	logTracingTest(t)
+}
+
+func TestTracingFeatureDisabled(t *testing.T) {
 	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime())
 	slog.SetDefault(logger)
 
-	ctx := context.Background()
+	logTracingTest(t)
+}
 
+func logTracingTest(t *testing.T) {
+	ctx := context.Background()
 	// set up a recording tracer, non-recording span will not get a trace_id
 	tpShutdown, err := tracing.InitProvider(ctx, tracing.WithStdoutTrace())
 	if err != nil {
@@ -42,5 +52,4 @@ func TestNewTracingHandler(t *testing.T) {
 		log.With("foo", "bar2").Error("have a nice day", io.ErrClosedPipe)
 		log.Error("example error2", io.ErrClosedPipe)
 	}()
-
 }
