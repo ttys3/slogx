@@ -8,7 +8,7 @@ require (
 	github.com/ttys3/slogsimple v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.0
 	go.opentelemetry.io/otel v1.11.2
-	golang.org/x/exp v0.0.0-20221229233502-02c3fc3b3eb4
+	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30
 )
 
 require (
