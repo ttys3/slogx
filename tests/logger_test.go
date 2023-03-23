@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"context"
 	"github.com/ttys3/slogsimple"
 	"net"
 	"os"
@@ -10,20 +11,22 @@ import (
 )
 
 func TestSlogLogging(t *testing.T) {
+	ctx := context.Background()
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr)))
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", net.ErrClosed, "status", 500)
-	slog.LogAttrs(slog.LevelError, "oops",
+	slog.LogAttrs(ctx, slog.LevelError, "oops",
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
 
 func TestSlogWith(t *testing.T) {
+	ctx := context.Background()
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr)))
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
 	slog.Error("oops", net.ErrClosed, "status", 500)
-	slog.LogAttrs(slog.LevelError, "oops",
+	slog.LogAttrs(ctx, slog.LevelError, "oops",
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
 
