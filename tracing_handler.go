@@ -1,6 +1,7 @@
 package slogsimple
 
 import (
+	"context"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/exp/slog"
@@ -22,13 +23,13 @@ func NewTracingHandler(h slog.Handler) *TracingHandler {
 
 // Enabled implements Handler.Enabled by reporting whether
 // level is at least as large as h's level.
-func (h *TracingHandler) Enabled(level slog.Level) bool {
-	return h.handler.Enabled(level)
+func (h *TracingHandler) Enabled(ctx context.Context, level slog.Level) bool {
+	return h.handler.Enabled(ctx, level)
 }
 
 // Handle implements Handler.Handle.
-func (h *TracingHandler) Handle(r slog.Record) error {
-	span := trace.SpanFromContext(r.Context)
+func (h *TracingHandler) Handle(ctx context.Context, r slog.Record) error {
+	span := trace.SpanFromContext(ctx)
 	if span.IsRecording() {
 		if r.Level >= slog.LevelError {
 			span.SetStatus(codes.Error, r.Message)
@@ -42,7 +43,7 @@ func (h *TracingHandler) Handle(r slog.Record) error {
 			// h.handler = h.handler.WithAttrs([]slog.Attr{slog.String(TraceIDKey, traceID)})
 		}
 	}
-	return h.handler.Handle(r)
+	return h.handler.Handle(ctx, r)
 }
 
 // WithAttrs implements Handler.WithAttrs.

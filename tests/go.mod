@@ -7,8 +7,8 @@ replace github.com/ttys3/slogsimple => ../
 require (
 	github.com/ttys3/slogsimple v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.0
-	go.opentelemetry.io/otel v1.11.2
-	golang.org/x/exp v0.0.0-20221230185412-738e83a70c30
+	go.opentelemetry.io/otel v1.14.0
+	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 )
 
 require (
@@ -23,7 +23,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.11.2 // indirect
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.11.2 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.2 // indirect
-	go.opentelemetry.io/otel/trace v1.11.2 // indirect
+	go.opentelemetry.io/otel/trace v1.14.0 // indirect
 	go.opentelemetry.io/proto/otlp v0.19.0 // indirect
 	golang.org/x/net v0.4.0 // indirect
 	golang.org/x/sys v0.3.0 // indirect
