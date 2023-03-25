@@ -3,13 +3,14 @@ package tests
 import (
 	"bytes"
 	"context"
-	"github.com/ttys3/slogsimple"
 	"io"
 	"net"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
+
+	"github.com/ttys3/slogsimple"
 
 	"golang.org/x/exp/slog"
 )
@@ -53,7 +54,7 @@ func TestSlogWith(t *testing.T) {
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.LogAttrs(ctx, slog.LevelError, "oops",
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }

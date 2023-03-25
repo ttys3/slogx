@@ -3,13 +3,14 @@ package tests
 import (
 	"bytes"
 	"context"
+	"io"
+	"os"
+	"testing"
+
 	"github.com/ttys3/slogsimple"
 	"github.com/ttys3/tracing-go"
 	"go.opentelemetry.io/otel"
 	"golang.org/x/exp/slog"
-	"io"
-	"os"
-	"testing"
 )
 
 func TestNewTracingHandler(t *testing.T) {
@@ -57,7 +58,6 @@ func TestNewTracingHandler(t *testing.T) {
 		log.With("foo", "bar2").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
 
 		log.ErrorCtx(ctx, "example error2", "err", io.ErrClosedPipe)
-
 	}()
 }
 
@@ -86,7 +86,7 @@ func TestTracingFeatureDisabled(t *testing.T) {
 	buf.Reset()
 
 	log.With("foo", "bar").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
-	log.ErrorCtx(ctx, "example error", io.ErrClosedPipe)
+	log.ErrorCtx(ctx, "example error", "err", io.ErrClosedPipe)
 
 	func() {
 		ctx, span := otel.Tracer("my-tracer-name").Start(ctx, "hello.SlogSubFunc001")
