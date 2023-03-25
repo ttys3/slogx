@@ -37,19 +37,23 @@ func New(opts ...Option) *slog.Logger {
 
 func NewHandler(options *options) slog.Handler {
 	var w io.Writer
-	switch options.Output {
-	case "stdout":
-		w = os.Stdout
-	case "stderr":
-		w = os.Stderr
-	case "discard":
-		w = io.Discard
-	default:
-		var err error
-		w, err = os.OpenFile(options.Output, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
-		if err != nil {
-			slog.Error("failed to open log file, fallback to stderr", err)
+	if options.Writer != nil {
+		w = options.Writer
+	} else {
+		switch options.Output {
+		case "stdout":
+			w = os.Stdout
+		case "stderr", "":
 			w = os.Stderr
+		case "discard":
+			w = io.Discard
+		default:
+			var err error
+			w, err = os.OpenFile(options.Output, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+			if err != nil {
+				slog.Error("failed to open log file, fallback to stderr", err)
+				w = os.Stderr
+			}
 		}
 	}
 

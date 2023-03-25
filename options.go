@@ -1,5 +1,7 @@
 package slogsimple
 
+import "io"
+
 // Option is an application option.
 type Option func(o *options)
 
@@ -13,10 +15,11 @@ type HandlerOptions struct {
 type options struct {
 	HandlerOptions
 
-	Level   string // debug, info, warn, error
-	Format  string // json, text
-	Output  string // stdout, stderr, discard, or a file path
-	Tracing bool   // enable tracing feature
+	Level   string    // debug, info, warn, error
+	Format  string    // json, text
+	Output  string    // stdout, stderr, discard, or a file path
+	Writer  io.Writer // set this to override Output
+	Tracing bool      // enable tracing feature
 }
 
 func WithDisableSource() Option {
@@ -56,6 +59,10 @@ func WithOutput(output string) Option {
 		}
 		o.Output = output
 	}
+}
+
+func WithWriter(w io.Writer) Option {
+	return func(o *options) { o.Writer = w }
 }
 
 func WithTracing() Option {

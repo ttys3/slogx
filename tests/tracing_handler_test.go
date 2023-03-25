@@ -1,30 +1,26 @@
 package tests
 
 import (
+	"bytes"
 	"context"
 	"github.com/ttys3/slogsimple"
 	"github.com/ttys3/tracing-go"
 	"go.opentelemetry.io/otel"
 	"golang.org/x/exp/slog"
 	"io"
+	"os"
 	"testing"
 )
 
 func TestNewTracingHandler(t *testing.T) {
-	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime(), slogsimple.WithTracing())
+	var buf bytes.Buffer
+	mw := io.MultiWriter(&buf, os.Stderr)
+	logger := slogsimple.New(slogsimple.WithLevel("debug"),
+		slogsimple.WithDisableTime(),
+		slogsimple.WithTracing(),
+		slogsimple.WithWriter(mw))
 	slog.SetDefault(logger)
 
-	logTracingTest(t)
-}
-
-func TestTracingFeatureDisabled(t *testing.T) {
-	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime())
-	slog.SetDefault(logger)
-
-	logTracingTest(t)
-}
-
-func logTracingTest(t *testing.T) {
 	ctx := context.Background()
 	// set up a recording tracer, non-recording span will not get a trace_id
 	tpShutdown, err := tracing.InitProvider(ctx, tracing.WithStdoutTrace())
@@ -40,6 +36,55 @@ func logTracingTest(t *testing.T) {
 
 	log := slog.With("foo", "bar")
 	log.InfoCtx(ctx, "hello world")
+	checkLogOutput(t, buf.String(), `{"level":"INFO","source":"tests/tracing_handler_test.go:\d+","msg":"hello world","foo":"bar","trace_id":"\w+"}`)
+	buf.Reset()
+
+	log.With("foo", "bar").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
+	checkLogOutput(t, buf.String(), `{"level":"ERROR","source":"tests/tracing_handler_test.go:\d+","msg":"have a nice day","foo":"bar","foo":"bar","err":"io: read/write on closed pipe","trace_id":"\w+"}`)
+	buf.Reset()
+
+	log.ErrorCtx(ctx, "example error", "err", io.ErrClosedPipe)
+	checkLogOutput(t, buf.String(), `{"level":"ERROR","source":"tests/tracing_handler_test.go:\d+","msg":"example error","foo":"bar","err":"io: read/write on closed pipe","trace_id":"\w+"}`)
+	buf.Reset()
+
+	func() {
+		ctx, span := otel.Tracer("my-tracer-name").Start(ctx, "hello.SlogSubFunc001")
+		defer span.End()
+
+		log := slog.Default()
+		log.InfoCtx(ctx, "second tracing span")
+
+		log.With("foo", "bar2").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
+
+		log.ErrorCtx(ctx, "example error2", "err", io.ErrClosedPipe)
+
+	}()
+}
+
+func TestTracingFeatureDisabled(t *testing.T) {
+	var buf bytes.Buffer
+	mw := io.MultiWriter(&buf, os.Stderr)
+	logger := slogsimple.New(slogsimple.WithLevel("debug"), slogsimple.WithDisableTime(), slogsimple.WithWriter(mw))
+	slog.SetDefault(logger)
+
+	ctx := context.Background()
+	// set up a recording tracer, non-recording span will not get a trace_id
+	tpShutdown, err := tracing.InitProvider(ctx, tracing.WithStdoutTrace())
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() {
+		tpShutdown(context.Background())
+	})
+
+	ctx, newSpan := otel.Tracer("my-tracer-name").Start(ctx, "hello.Slog")
+	defer newSpan.End()
+
+	log := slog.With("foo", "bar")
+	log.InfoCtx(ctx, "hello world")
+	checkLogOutput(t, buf.String(), `{"level":"INFO","source":"tests/tracing_handler_test.go:\d+","msg":"hello world","foo":"bar"}`)
+	buf.Reset()
+
 	log.With("foo", "bar").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
 	log.ErrorCtx(ctx, "example error", io.ErrClosedPipe)
 
