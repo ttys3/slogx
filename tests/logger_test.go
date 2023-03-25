@@ -14,7 +14,7 @@ func TestSlogLogging(t *testing.T) {
 	ctx := context.Background()
 	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr)))
 	slog.Info("hello", "name", "Al")
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.LogAttrs(ctx, slog.LevelError, "oops",
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
@@ -36,7 +36,7 @@ func TestSlogCustomOptions(t *testing.T) {
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.Warn("this is warning")
 	slog.Debug("this debug message should not shown up")
 }
@@ -49,7 +49,7 @@ func TestSlogWithAtomicLevelVar(t *testing.T) {
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.Warn("this is warning")
 	slog.Debug("this debug message should NOT shown up")
 	lvl.Set(slog.LevelDebug)
@@ -60,7 +60,7 @@ func TestNewLogHandler(t *testing.T) {
 	slogsimple.InitDefault()
 
 	slog.Info("hello", "name", "Al")
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.Debug("this debug message should NOT shown up")
 }
 
@@ -70,5 +70,5 @@ func TestSlogsimpleText(t *testing.T) {
 	l := slog.With("name", "Al")
 	l.Debug("this is debug message")
 	l.Info("hello", "age", 18)
-	slog.Error("oops", net.ErrClosed, "status", 500)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 }

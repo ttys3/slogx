@@ -30,11 +30,11 @@ func main() {
 	}
 	defer tpShutdown(context.Background())
 
-	ctxWithSpan, newSpan := otel.Tracer("my-tracer-name").Start(ctx, "hello.Slog")
+	ctx, newSpan := otel.Tracer("my-tracer-name").Start(ctx, "hello.Slog")
 	defer newSpan.End()
-	ctxLog := slog.With("foo", "bar").WithContext(ctxWithSpan)
-	ctxLog.Info("hello world")
-	ctxLog.With("foo", "bar").Error("have a nice day", io.ErrClosedPipe)
-	ctxLog.Error("example error", io.ErrClosedPipe)
+	ctxLog := slog.With("foo", "bar")
+	ctxLog.InfoCtx(ctx, "hello world")
+	ctxLog.With("foo", "bar").ErrorCtx(ctx, "have a nice day", io.ErrClosedPipe)
+	ctxLog.ErrorCtx(ctx, "example error", io.ErrClosedPipe)
 }
 ```
