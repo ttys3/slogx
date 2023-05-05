@@ -2,12 +2,14 @@ package slogsimple
 
 import (
 	"context"
+
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/exp/slog"
 )
 
 const TraceIDKey = "trace_id"
+const SpanIDKey = "span_id"
 
 type TracingHandler struct {
 	handler slog.Handler
@@ -38,7 +40,7 @@ func (h *TracingHandler) Handle(ctx context.Context, r slog.Record) error {
 			// With() lost attrs bug has been fixed
 			// see https://github.com/golang/go/discussions/54763#discussioncomment-4504780
 			// and https://go.dev/cl/459615
-			r.AddAttrs(slog.String(TraceIDKey, spanCtx.TraceID().String()))
+			r.AddAttrs(slog.String(TraceIDKey, spanCtx.TraceID().String()), slog.String(SpanIDKey, spanCtx.SpanID().String()))
 			// do NOT using h.handler = h.handler.WithAttrs, will get duplicated trace_id
 			// h.handler = h.handler.WithAttrs([]slog.Attr{slog.String(TraceIDKey, traceID)})
 		}
