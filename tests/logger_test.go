@@ -41,7 +41,7 @@ func TestSlogLogging(t *testing.T) {
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
 
-	slog.SetDefault(slog.New(slog.NewTextHandler(mw)))
+	slog.SetDefault(slog.New(slog.NewTextHandler(mw, nil)))
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.LogAttrs(ctx, slog.LevelError, "oops",
@@ -50,7 +50,7 @@ func TestSlogLogging(t *testing.T) {
 
 func TestSlogWith(t *testing.T) {
 	ctx := context.Background()
-	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr)))
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, nil)))
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
@@ -60,8 +60,9 @@ func TestSlogWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	th := slogsimple.NewHandlerOptions(slog.LevelInfo, &slogsimple.HandlerOptions{}).NewJSONHandler(os.Stderr)
-	slog.SetDefault(slog.New(th))
+	opts := slogsimple.NewHandlerOptions(slog.LevelInfo, &slogsimple.HandlerOptions{})
+	handler := slog.NewJSONHandler(os.Stderr, &opts)
+	slog.SetDefault(slog.New(handler))
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
@@ -73,8 +74,9 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	th := slogsimple.NewHandlerOptions(lvl, &slogsimple.HandlerOptions{}).NewJSONHandler(os.Stderr)
-	slog.SetDefault(slog.New(th))
+	opts := slogsimple.NewHandlerOptions(lvl, &slogsimple.HandlerOptions{})
+	handler := slog.NewJSONHandler(os.Stderr, &opts)
+	slog.SetDefault(slog.New(handler))
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)

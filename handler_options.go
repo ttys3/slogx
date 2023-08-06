@@ -74,15 +74,15 @@ func NewHandler(options *options) slog.Handler {
 	lvl := &slog.LevelVar{}
 	lvl.Set(theLevel)
 
-	h := NewHandlerOptions(lvl, &options.HandlerOptions)
+	opts := NewHandlerOptions(lvl, &options.HandlerOptions)
 	var th slog.Handler
 	switch options.Format {
 	case "text":
-		th = h.NewTextHandler(w)
+		th = slog.NewTextHandler(w, &opts)
 	case "json":
 		fallthrough
 	default:
-		th = h.NewJSONHandler(w)
+		th = slog.NewJSONHandler(w, &opts)
 	}
 	return th
 }
