@@ -1,11 +1,12 @@
 package slogsimple
 
 import (
+	"fmt"
 	"io"
 	"os"
 	"strings"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 func InitDefault() {
@@ -108,30 +109,33 @@ func NewHandlerOptions(level slog.Leveler, opt *HandlerOptions) slog.HandlerOpti
 		// handle short source file location
 		if !opt.DisableSource && !opt.FullSource {
 			if a.Key == slog.SourceKey {
-
 				file := a.Value.String()
-				short := file
+				if src, ok := a.Value.Any().(*slog.Source); ok {
+					// File is the absolute path to the file
+					short := src.File
 
-				// using short file like stdlog
-				// for i := len(file) - 1; i > 0; i-- {
-				// 	if file[i] == '/' {
-				// 		short = file[i+1:]
-				// 		break
-				// 	}
-				// }
+					// using short file like stdlog
+					// for i := len(file) - 1; i > 0; i-- {
+					// 	if file[i] == '/' {
+					// 		short = file[i+1:]
+					// 		break
+					// 	}
+					// }
 
-				// zap like short file
-				// https://github.com/uber-go/zap/blob/a55bdc32f526699c3b4cc51a2cc97e944d02fbbf/zapcore/entry.go#L102-L136
-				idx := strings.LastIndexByte(file, '/')
-				if idx > 0 {
-					// Find the penultimate separator.
-					idx = strings.LastIndexByte(file[:idx], '/')
+					// zap like short file
+					// https://github.com/uber-go/zap/blob/a55bdc32f526699c3b4cc51a2cc97e944d02fbbf/zapcore/entry.go#L102-L136
+					idx := strings.LastIndexByte(src.File, '/')
 					if idx > 0 {
-						short = file[idx+1:]
+						// Find the penultimate separator.
+						idx = strings.LastIndexByte(src.File[:idx], '/')
+						if idx > 0 {
+							short = src.File[idx+1:]
+						}
 					}
+
+					file = fmt.Sprintf("%s:%d", short, src.Line)
 				}
 
-				file = short
 				return slog.Attr{
 					Key:   slog.SourceKey,
 					Value: slog.StringValue(file),

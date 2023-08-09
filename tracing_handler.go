@@ -4,7 +4,7 @@ import (
 	"context"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 const TraceIDKey = "trace_id"

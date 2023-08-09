@@ -1,6 +1,6 @@
 module github.com/ttys3/slogsimple/tests
 
-go 1.19
+go 1.21
 
 replace github.com/ttys3/slogsimple => ../
 
@@ -8,7 +8,6 @@ require (
 	github.com/ttys3/slogsimple v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.2
 	go.opentelemetry.io/otel v1.16.0
-	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b
 )
 
 require (
@@ -26,10 +25,10 @@ require (
 	go.opentelemetry.io/otel/sdk v1.16.0 // indirect
 	go.opentelemetry.io/otel/trace v1.16.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
+	golang.org/x/exp v0.0.0-20230801115018-d63ba01acd4b // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
-	google.golang.org/genproto v0.0.0-20230726155614-23370e0ffb3e // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230803162519-f966b187b2e5 // indirect
 	google.golang.org/grpc v1.57.0 // indirect

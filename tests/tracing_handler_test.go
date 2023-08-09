@@ -4,13 +4,13 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"log/slog"
 	"os"
 	"testing"
 
 	"github.com/ttys3/slogsimple"
 	"github.com/ttys3/tracing-go"
 	"go.opentelemetry.io/otel"
-	"golang.org/x/exp/slog"
 )
 
 func TestNewTracingHandler(t *testing.T) {
@@ -36,15 +36,15 @@ func TestNewTracingHandler(t *testing.T) {
 	defer newSpan.End()
 
 	log := slog.With("foo", "bar")
-	log.InfoCtx(ctx, "hello world")
+	log.InfoContext(ctx, "hello world")
 	checkLogOutput(t, buf.String(), `{"level":"INFO","source":"tests/tracing_handler_test.go:\d+","msg":"hello world","foo":"bar","trace_id":"\w+"}`)
 	buf.Reset()
 
-	log.With("foo", "bar").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
+	log.With("foo", "bar").ErrorContext(ctx, "have a nice day", "err", io.ErrClosedPipe)
 	checkLogOutput(t, buf.String(), `{"level":"ERROR","source":"tests/tracing_handler_test.go:\d+","msg":"have a nice day","foo":"bar","foo":"bar","err":"io: read/write on closed pipe","trace_id":"\w+"}`)
 	buf.Reset()
 
-	log.ErrorCtx(ctx, "example error", "err", io.ErrClosedPipe)
+	log.ErrorContext(ctx, "example error", "err", io.ErrClosedPipe)
 	checkLogOutput(t, buf.String(), `{"level":"ERROR","source":"tests/tracing_handler_test.go:\d+","msg":"example error","foo":"bar","err":"io: read/write on closed pipe","trace_id":"\w+"}`)
 	buf.Reset()
 
@@ -53,11 +53,11 @@ func TestNewTracingHandler(t *testing.T) {
 		defer span.End()
 
 		log := slog.Default()
-		log.InfoCtx(ctx, "second tracing span")
+		log.InfoContext(ctx, "second tracing span")
 
-		log.With("foo", "bar2").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
+		log.With("foo", "bar2").ErrorContext(ctx, "have a nice day", "err", io.ErrClosedPipe)
 
-		log.ErrorCtx(ctx, "example error2", "err", io.ErrClosedPipe)
+		log.ErrorContext(ctx, "example error2", "err", io.ErrClosedPipe)
 	}()
 }
 
@@ -81,20 +81,20 @@ func TestTracingFeatureDisabled(t *testing.T) {
 	defer newSpan.End()
 
 	log := slog.With("foo", "bar")
-	log.InfoCtx(ctx, "hello world")
+	log.InfoContext(ctx, "hello world")
 	checkLogOutput(t, buf.String(), `{"level":"INFO","source":"tests/tracing_handler_test.go:\d+","msg":"hello world","foo":"bar"}`)
 	buf.Reset()
 
-	log.With("foo", "bar").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
-	log.ErrorCtx(ctx, "example error", "err", io.ErrClosedPipe)
+	log.With("foo", "bar").ErrorContext(ctx, "have a nice day", "err", io.ErrClosedPipe)
+	log.ErrorContext(ctx, "example error", "err", io.ErrClosedPipe)
 
 	func() {
 		ctx, span := otel.Tracer("my-tracer-name").Start(ctx, "hello.SlogSubFunc001")
 		defer span.End()
 
 		log := slog.Default()
-		log.InfoCtx(ctx, "second tracing span")
-		log.With("foo", "bar2").ErrorCtx(ctx, "have a nice day", "err", io.ErrClosedPipe)
-		log.ErrorCtx(ctx, "example error2", "err", io.ErrClosedPipe)
+		log.InfoContext(ctx, "second tracing span")
+		log.With("foo", "bar2").ErrorContext(ctx, "have a nice day", "err", io.ErrClosedPipe)
+		log.ErrorContext(ctx, "example error2", "err", io.ErrClosedPipe)
 	}()
 }

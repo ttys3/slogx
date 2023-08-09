@@ -12,7 +12,7 @@ import (
 
 	"github.com/ttys3/slogsimple"
 
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 func checkLogOutput(t *testing.T, got, wantRegexp string) {
@@ -36,7 +36,7 @@ func clean(s string) string {
 	return strings.ReplaceAll(s, "\n", "~")
 }
 
-func TestSlogLogging(t *testing.T) {
+func TestSlogTextLogging(t *testing.T) {
 	ctx := context.Background()
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
@@ -48,9 +48,36 @@ func TestSlogLogging(t *testing.T) {
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
 
-func TestSlogWith(t *testing.T) {
+func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
+	ctx := context.Background()
+	var buf bytes.Buffer
+	mw := io.MultiWriter(&buf, os.Stderr)
+
+	// source is string, in format file:line, for example:
+	// source=/home/ttys3/repo/go/slogsimple/tests/logger_test.go:58
+	slog.SetDefault(slog.New(slog.NewTextHandler(mw, &slog.HandlerOptions{AddSource: true})))
+	slog.Info("hello", "name", "Al")
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
+	slog.LogAttrs(ctx, slog.LevelError, "oops",
+		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
+}
+
+func TestSlogJsonWith(t *testing.T) {
 	ctx := context.Background()
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, nil)))
+
+	l := slog.With("name", "Al")
+	l.Info("hello", "age", 18)
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
+	slog.LogAttrs(ctx, slog.LevelError, "oops",
+		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
+}
+
+func TestSlogJsonSourceLocWith(t *testing.T) {
+	ctx := context.Background()
+	// source is a JSON object now, for example
+	// "source":{"function":"github.com/ttys3/slogsimple/tests.TestSlogJsonSourceLocWith","file":"/home/ttys3/repo/go/slogsimple/tests/logger_test.go","line":79}
+	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{AddSource: true})))
 
 	l := slog.With("name", "Al")
 	l.Info("hello", "age", 18)
