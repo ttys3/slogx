@@ -32,9 +32,12 @@ func main() {
 
 	ctx, newSpan := otel.Tracer("my-tracer-name").Start(ctx, "hello.Slog")
 	defer newSpan.End()
-	log := slog.With("foo", "bar")
-	log.InfoContext(ctx, "hello world")
-	log.With("foo", "bar").ErrorContext(ctx, "have a nice day", io.ErrClosedPipe)
-	log.ErrorContext(ctx, "example error", io.ErrClosedPipe)
+	log := slog.With("user_id", 123456)
+	// no trace_id in log
+	log.Info("hello world")
+
+	// has trace_id in log
+	log.With("foo", "bar").ErrorContext(ctx, "have a nice day", "err", io.ErrClosedPipe)
+	log.ErrorContext(ctx, "example error", "err", io.ErrClosedPipe)
 }
 ```
