@@ -11,7 +11,7 @@ import (
     "github.com/ttys3/slogsimple"
     "github.com/ttys3/tracing-go"
     "go.opentelemetry.io/otel"
-    "golang.org/x/exp/slog"
+    "log/slog"
     "io"
 )
 
@@ -32,9 +32,9 @@ func main() {
 
 	ctx, newSpan := otel.Tracer("my-tracer-name").Start(ctx, "hello.Slog")
 	defer newSpan.End()
-	ctxLog := slog.With("foo", "bar")
-	ctxLog.InfoCtx(ctx, "hello world")
-	ctxLog.With("foo", "bar").ErrorCtx(ctx, "have a nice day", io.ErrClosedPipe)
-	ctxLog.ErrorCtx(ctx, "example error", io.ErrClosedPipe)
+	log := slog.With("foo", "bar")
+	log.InfoContext(ctx, "hello world")
+	log.With("foo", "bar").ErrorContext(ctx, "have a nice day", io.ErrClosedPipe)
+	log.ErrorContext(ctx, "example error", io.ErrClosedPipe)
 }
 ```
