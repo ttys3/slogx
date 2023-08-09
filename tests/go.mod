@@ -1,11 +1,11 @@
-module github.com/ttys3/slogsimple/tests
+module github.com/ttys3/sslog/tests
 
 go 1.21
 
-replace github.com/ttys3/slogsimple => ../
+replace github.com/ttys3/sslog => ../
 
 require (
-	github.com/ttys3/slogsimple v0.0.0-00010101000000-000000000000
+	github.com/ttys3/sslog v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.2
 	go.opentelemetry.io/otel v1.16.0
 )

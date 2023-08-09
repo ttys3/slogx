@@ -10,7 +10,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ttys3/slogsimple"
+	"github.com/ttys3/sslog"
 
 	"log/slog"
 )
@@ -54,7 +54,7 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 	mw := io.MultiWriter(&buf, os.Stderr)
 
 	// source is string, in format file:line, for example:
-	// source=/home/ttys3/repo/go/slogsimple/tests/logger_test.go:58
+	// source=/home/ttys3/repo/go/sslog/tests/logger_test.go:58
 	slog.SetDefault(slog.New(slog.NewTextHandler(mw, &slog.HandlerOptions{AddSource: true})))
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
@@ -76,7 +76,7 @@ func TestSlogJsonWith(t *testing.T) {
 func TestSlogJsonSourceLocWith(t *testing.T) {
 	ctx := context.Background()
 	// source is a JSON object now, for example
-	// "source":{"function":"github.com/ttys3/slogsimple/tests.TestSlogJsonSourceLocWith","file":"/home/ttys3/repo/go/slogsimple/tests/logger_test.go","line":79}
+	// "source":{"function":"github.com/ttys3/sslog/tests.TestSlogJsonSourceLocWith","file":"/home/ttys3/repo/go/sslog/tests/logger_test.go","line":79}
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{AddSource: true})))
 
 	l := slog.With("name", "Al")
@@ -87,7 +87,7 @@ func TestSlogJsonSourceLocWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	opts := slogsimple.NewHandlerOptions(slog.LevelInfo, &slogsimple.HandlerOptions{})
+	opts := sslog.NewHandlerOptions(slog.LevelInfo, &sslog.HandlerOptions{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 
@@ -101,7 +101,7 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	opts := slogsimple.NewHandlerOptions(lvl, &slogsimple.HandlerOptions{})
+	opts := sslog.NewHandlerOptions(lvl, &sslog.HandlerOptions{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 
@@ -115,7 +115,7 @@ func TestSlogWithAtomicLevelVar(t *testing.T) {
 }
 
 func TestNewLogHandler(t *testing.T) {
-	slogsimple.InitDefault()
+	sslog.InitDefault()
 
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
@@ -125,10 +125,10 @@ func TestNewLogHandler(t *testing.T) {
 func TestSlogsimpleText(t *testing.T) {
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
-	slog.SetDefault(slogsimple.New(slogsimple.WithLevel("debug"),
-		slogsimple.WithFormat("text"),
-		slogsimple.WithWriter(mw),
-		slogsimple.WithDisableTime()))
+	slog.SetDefault(sslog.New(sslog.WithLevel("debug"),
+		sslog.WithFormat("text"),
+		sslog.WithWriter(mw),
+		sslog.WithDisableTime()))
 
 	l := slog.With("name", "Al")
 	l.Debug("this is debug message")

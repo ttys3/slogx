@@ -1,4 +1,4 @@
-package slogsimple
+package sslog
 
 import "io"
 

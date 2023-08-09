@@ -1,4 +1,4 @@
-module github.com/ttys3/slogsimple
+module github.com/ttys3/sslog
 
 go 1.21
 

@@ -1,4 +1,4 @@
-# slogsimple
+# sslog
 
 slog handler with opentelemetry tracing support and simple init helper method
 
@@ -11,7 +11,7 @@ package main
 
 import (
     "context"
-    "github.com/ttys3/slogsimple"
+    "github.com/ttys3/sslog"
     "github.com/ttys3/tracing-go"
     "go.opentelemetry.io/otel"
     "log/slog"
@@ -21,7 +21,7 @@ import (
 func main() {
 	// init a new slog json handler at info level with output to stderr
 	// and wrap it within a tracing handler
-	logger := slogsimple.New(slogsimple.WithTracing())
+	logger := sslog.New(sslog.WithTracing())
 	slog.SetDefault(logger)
 
 	ctx := context.Background()
