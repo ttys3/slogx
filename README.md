@@ -1,5 +1,8 @@
 # slogsimple
+
 slog handler with opentelemetry tracing support and simple init helper method
+
+> `log/slog` stdlib requires go version >= 1.21.0
 
 ## usage
 
