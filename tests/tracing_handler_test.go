@@ -8,7 +8,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/ttys3/sslog"
+	"github.com/ttys3/slogx"
 	"github.com/ttys3/tracing-go"
 	"go.opentelemetry.io/otel"
 )
@@ -16,10 +16,10 @@ import (
 func TestNewTracingHandler(t *testing.T) {
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
-	logger := sslog.New(sslog.WithLevel("debug"),
-		sslog.WithDisableTime(),
-		sslog.WithTracing(),
-		sslog.WithWriter(mw))
+	logger := slogx.New(slogx.WithLevel("debug"),
+		slogx.WithDisableTime(),
+		slogx.WithTracing(),
+		slogx.WithWriter(mw))
 	slog.SetDefault(logger)
 
 	ctx := context.Background()
@@ -64,7 +64,7 @@ func TestNewTracingHandler(t *testing.T) {
 func TestTracingFeatureDisabled(t *testing.T) {
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
-	logger := sslog.New(sslog.WithLevel("debug"), sslog.WithDisableTime(), sslog.WithWriter(mw))
+	logger := slogx.New(slogx.WithLevel("debug"), slogx.WithDisableTime(), slogx.WithWriter(mw))
 	slog.SetDefault(logger)
 
 	ctx := context.Background()

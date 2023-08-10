@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ttys3/sslog"
+	"github.com/ttys3/slogx"
 
 	"log/slog"
 )
@@ -56,7 +56,7 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 	mw := io.MultiWriter(&buf, os.Stderr)
 
 	// source is string, in format file:line, for example:
-	// source=/home/ttys3/repo/go/sslog/tests/logger_test.go:58
+	// source=/home/ttys3/repo/go/slogx/tests/logger_test.go:58
 	slog.SetDefault(slog.New(slog.NewTextHandler(mw, &slog.HandlerOptions{AddSource: true})))
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
@@ -64,9 +64,9 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
 
-// go test -v -run=TestSSlogCli ./...
-func TestSSlogCliColor(t *testing.T) {
-	handler := sslog.NewCliHandler(os.Stderr, &sslog.CliHandlerOptions{
+// go test -v -run=TestSlogxCli ./...
+func TestSlogxCliColor(t *testing.T) {
+	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
 		ColoredLevel: true,
 		HandlerOptions: slog.HandlerOptions{
 			Level: slog.LevelDebug,
@@ -88,8 +88,8 @@ func TestSSlogCliColor(t *testing.T) {
 	slog.Debug("this is a debug message")
 }
 
-func TestSSlogCliColorApexDemo(t *testing.T) {
-	handler := sslog.NewCliHandler(os.Stderr, &sslog.CliHandlerOptions{
+func TestSlogxCliColorApexDemo(t *testing.T) {
+	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
 		ColoredLevel: true,
 		HandlerOptions: slog.HandlerOptions{
 			Level: slog.LevelDebug,
@@ -120,7 +120,7 @@ func TestSlogJsonWith(t *testing.T) {
 func TestSlogJsonSourceLocWith(t *testing.T) {
 	ctx := context.Background()
 	// source is a JSON object now, for example
-	// "source":{"function":"github.com/ttys3/sslog/tests.TestSlogJsonSourceLocWith","file":"/home/ttys3/repo/go/sslog/tests/logger_test.go","line":79}
+	// "source":{"function":"github.com/ttys3/slogx/tests.TestSlogJsonSourceLocWith","file":"/home/ttys3/repo/go/slogx/tests/logger_test.go","line":79}
 	slog.SetDefault(slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{AddSource: true})))
 
 	l := slog.With("name", "Al")
@@ -131,7 +131,7 @@ func TestSlogJsonSourceLocWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	opts := sslog.NewHandlerOptions(slog.LevelInfo, &sslog.HandlerOptions{})
+	opts := slogx.NewHandlerOptions(slog.LevelInfo, &slogx.HandlerOptions{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 
@@ -145,7 +145,7 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	opts := sslog.NewHandlerOptions(lvl, &sslog.HandlerOptions{})
+	opts := slogx.NewHandlerOptions(lvl, &slogx.HandlerOptions{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 
@@ -159,20 +159,20 @@ func TestSlogWithAtomicLevelVar(t *testing.T) {
 }
 
 func TestNewLogHandler(t *testing.T) {
-	sslog.InitDefault()
+	slogx.InitDefault()
 
 	slog.Info("hello", "name", "Al")
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.Debug("this debug message should NOT shown up")
 }
 
-func TestSlogsimpleText(t *testing.T) {
+func TestSlogxText(t *testing.T) {
 	var buf bytes.Buffer
 	mw := io.MultiWriter(&buf, os.Stderr)
-	slog.SetDefault(sslog.New(sslog.WithLevel("debug"),
-		sslog.WithFormat("text"),
-		sslog.WithWriter(mw),
-		sslog.WithDisableTime()))
+	slog.SetDefault(slogx.New(slogx.WithLevel("debug"),
+		slogx.WithFormat("text"),
+		slogx.WithWriter(mw),
+		slogx.WithDisableTime()))
 
 	l := slog.With("name", "Al")
 	l.Debug("this is debug message")

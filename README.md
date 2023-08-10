@@ -1,4 +1,4 @@
-# sslog
+# slogx
 
 > `log/slog` stdlib requires go version >= 1.21.0
 
@@ -6,7 +6,7 @@ slog handler with opentelemetry tracing support and simple init helper method
 
 trace_id in log
 
-![image](https://github.com/ttys3/sslog/assets/41882455/281b00e7-fd7e-4e4c-b3e7-ea3f7ab27066)
+![image](https://github.com/ttys3/slogx/assets/41882455/281b00e7-fd7e-4e4c-b3e7-ea3f7ab27066)
 
 
 added Apex log cli handler like handler (impl ref https://github.com/apex/log/blob/master/handlers/cli/cli.go)
@@ -20,7 +20,7 @@ package main
 
 import (
     "context"
-    "github.com/ttys3/sslog"
+    "github.com/ttys3/slogx"
     "github.com/ttys3/tracing-go"
     "go.opentelemetry.io/otel"
     "log/slog"
@@ -30,7 +30,7 @@ import (
 func main() {
 	// init a new slog json handler at info level with output to stderr
 	// and wrap it within a tracing handler
-	logger := sslog.New(sslog.WithTracing())
+	logger := slogx.New(slogx.WithTracing())
 	slog.SetDefault(logger)
 
 	ctx := context.Background()

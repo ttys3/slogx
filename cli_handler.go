@@ -1,10 +1,10 @@
-package sslog
+package slogx
 
 import (
 	"context"
 	"fmt"
 	"github.com/fatih/color"
-	"github.com/ttys3/sslog/internal"
+	"github.com/ttys3/slogx/internal"
 	"io"
 	"log/slog"
 	"sync"

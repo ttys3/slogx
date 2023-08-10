@@ -1,12 +1,12 @@
-module github.com/ttys3/sslog/tests
+module github.com/ttys3/slogx/tests
 
 go 1.21
 
-replace github.com/ttys3/sslog => ../
+replace github.com/ttys3/slogx => ../
 
 require (
 	github.com/apex/log v1.9.0
-	github.com/ttys3/sslog v0.0.0-00010101000000-000000000000
+	github.com/ttys3/slogx v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.2
 	go.opentelemetry.io/otel v1.16.0
 )

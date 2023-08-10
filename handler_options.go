@@ -1,4 +1,4 @@
-package sslog
+package slogx
 
 import (
 	"fmt"
