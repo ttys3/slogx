@@ -5,6 +5,7 @@ go 1.21
 replace github.com/ttys3/sslog => ../
 
 require (
+	github.com/apex/log v1.9.0
 	github.com/ttys3/sslog v0.0.0-00010101000000-000000000000
 	github.com/ttys3/tracing-go v0.2.2
 	go.opentelemetry.io/otel v1.16.0
@@ -19,6 +20,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.16.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
+	github.com/pkg/errors v0.8.1 // indirect
 	go.opentelemetry.io/contrib/propagators/b3 v1.17.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/internal/retry v1.16.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.16.0 // indirect
