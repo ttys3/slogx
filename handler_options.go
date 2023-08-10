@@ -3,10 +3,9 @@ package slogx
 import (
 	"fmt"
 	"io"
+	"log/slog"
 	"os"
 	"strings"
-
-	"log/slog"
 )
 
 func InitDefault() {
@@ -80,6 +79,8 @@ func NewHandler(options *options) slog.Handler {
 	switch options.Format {
 	case "text":
 		th = slog.NewTextHandler(w, &opts)
+	case "cli":
+		th = NewCliHandler(w, &CliHandlerOptions{ColoredLevel: true})
 	case "json":
 		fallthrough
 	default:
