@@ -106,6 +106,19 @@ func TestSlogxCliColorApexDemo(t *testing.T) {
 	l.Error(fmt.Sprintf("failed to upload %s", "img.png"))
 }
 
+func TestSlogxCliColorApexDemoConstructor(t *testing.T) {
+	handler := slogx.New(slogx.WithLevel("debug"), slogx.WithFormat("cli"))
+	slog.SetDefault(handler)
+
+	l := slog.With("file", "something.png", "type", "image/png", "user", "tobi")
+	l.Debug("uploading file ...")
+	l.Info("upload")
+	l.Info("upload complete")
+	l.Warn("upload retry")
+	l.With("err", errors.New("unauthorized")).Error("upload failed")
+	l.Error(fmt.Sprintf("failed to upload %s", "img.png"))
+}
+
 func TestSlogxCliColorApexDemoDisableColor(t *testing.T) {
 	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
 		DisableColor: true,
