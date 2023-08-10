@@ -118,7 +118,6 @@ func (h *CliHandler) appendAttr(buf *internal.Buffer, attr slog.Attr, theColor *
 	buf.Write([]byte(" "))
 	if groupsPrefix != "" {
 		buf.WriteString(theColor.Sprint(groupsPrefix))
-		// buf.WriteString(theColor.Sprint("."))
 	}
 	buf.WriteString(theColor.Sprint(attr.Key))
 	buf.Write([]byte("="))
