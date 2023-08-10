@@ -126,7 +126,16 @@ func (h *CliHandler) appendAttr(buf *internal.Buffer, attr slog.Attr, theColor *
 	// if needQuote {
 	// 	buf.Write([]byte(`"`))
 	// }
-	buf.Write([]byte(attr.Value.String()))
+	if attr.Value.Kind() != slog.KindGroup {
+		buf.Write([]byte(attr.Value.String()))
+	} else {
+		buf.Write([]byte("{"))
+		for _, attr := range attr.Value.Group() {
+			h.appendAttr(buf, attr, theColor, groupsPrefix)
+		}
+		buf.Write([]byte(" }"))
+	}
+
 	// if needQuote {
 	// 	buf.Write([]byte(`"`))
 	// }

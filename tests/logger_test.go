@@ -78,7 +78,8 @@ func TestSSlogCliColor(t *testing.T) {
 		"key1": "value1",
 		"key2": 202308,
 		"key3": []string{"a", "b", "c"},
-	})
+	}, slog.Group("group_attr", "gkey1", "gvalue1", "gkey2", "gvalue2"))
+
 	l.Info("hello", "age", 18)
 	group1 := l.WithGroup("group1")
 	group1.Info("group1 info")
