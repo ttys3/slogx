@@ -1,8 +1,13 @@
 # sslog
 
+> `log/slog` stdlib requires go version >= 1.21.0
+
 slog handler with opentelemetry tracing support and simple init helper method
 
-> `log/slog` stdlib requires go version >= 1.21.0
+trace_id in log
+
+![image](https://github.com/ttys3/sslog/assets/41882455/281b00e7-fd7e-4e4c-b3e7-ea3f7ab27066)
+
 
 added Apex log cli handler like handler (impl ref https://github.com/apex/log/blob/master/handlers/cli/cli.go)
 
