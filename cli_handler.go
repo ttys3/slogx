@@ -44,7 +44,7 @@ type CliHandler struct {
 }
 
 type CliHandlerOptions struct {
-	ColoredLevel bool
+	DisableColor bool
 	slog.HandlerOptions
 }
 
@@ -67,16 +67,17 @@ func (h *CliHandler) Handle(ctx context.Context, r slog.Record) error {
 	defer buf.Free()
 
 	theColor := Colors[r.Level]
-	theColor.EnableColor()
 
-	if h.opts.ColoredLevel {
-		levelEmoji := Strings[r.Level]
-		padding := 4
-		coloredLevel := theColor.Sprintf("%s", bold.Sprintf("%*s", padding, levelEmoji))
-		buf.WriteString(coloredLevel)
+	if h.opts.DisableColor {
+		theColor.DisableColor()
 	} else {
-		buf.WriteString(r.Level.String())
+		theColor.EnableColor()
 	}
+
+	levelEmoji := Strings[r.Level]
+	padding := 4
+	coloredLevel := theColor.Sprintf("%s", bold.Sprintf("%*s", padding, levelEmoji))
+	buf.WriteString(coloredLevel)
 
 	buf.WriteString(" ")
 	buf.WriteString(fmt.Sprintf("%-25s", r.Message))
@@ -89,8 +90,6 @@ func (h *CliHandler) Handle(ctx context.Context, r slog.Record) error {
 			h.appendAttr(buf, attr, theColor, h.groupPrefix)
 		}
 	}
-
-	// buf.WriteString(" ")
 
 	// write attributes
 	if r.NumAttrs() > 0 {
@@ -113,8 +112,6 @@ func (h *CliHandler) Handle(ctx context.Context, r slog.Record) error {
 }
 
 func (h *CliHandler) appendAttr(buf *internal.Buffer, attr slog.Attr, theColor *color.Color, groupsPrefix string) {
-	theColor.EnableColor()
-
 	buf.Write([]byte(" "))
 	if groupsPrefix != "" {
 		buf.WriteString(theColor.Sprint(groupsPrefix))

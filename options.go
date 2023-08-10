@@ -1,20 +1,22 @@
 package slogx
 
-import "io"
+import (
+	"io"
+)
 
 // Option is an application option.
 type Option func(o *options)
 
-type HandlerOptions struct {
+type Options struct {
 	DisableSource bool
 	FullSource    bool
 	DisableTime   bool
-	ColoredLevel  bool // enable colored level
+	DisableColor  bool // for cli
 }
 
 // options is an application options.
 type options struct {
-	HandlerOptions
+	Options
 
 	Level   string    // debug, info, warn, error
 	Format  string    // json, text

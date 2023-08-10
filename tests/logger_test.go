@@ -67,7 +67,7 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 // go test -v -run=TestSlogxCli ./...
 func TestSlogxCliColor(t *testing.T) {
 	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
-		ColoredLevel: true,
+		DisableColor: false,
 		HandlerOptions: slog.HandlerOptions{
 			Level: slog.LevelDebug,
 		},
@@ -90,7 +90,25 @@ func TestSlogxCliColor(t *testing.T) {
 
 func TestSlogxCliColorApexDemo(t *testing.T) {
 	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
-		ColoredLevel: true,
+		DisableColor: false,
+		HandlerOptions: slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	})
+	slog.SetDefault(slog.New(handler))
+
+	l := slog.With("file", "something.png", "type", "image/png", "user", "tobi")
+	l.Debug("uploading file ...")
+	l.Info("upload")
+	l.Info("upload complete")
+	l.Warn("upload retry")
+	l.With("err", errors.New("unauthorized")).Error("upload failed")
+	l.Error(fmt.Sprintf("failed to upload %s", "img.png"))
+}
+
+func TestSlogxCliColorApexDemoDisableColor(t *testing.T) {
+	handler := slogx.NewCliHandler(os.Stderr, &slogx.CliHandlerOptions{
+		DisableColor: true,
 		HandlerOptions: slog.HandlerOptions{
 			Level: slog.LevelDebug,
 		},
@@ -131,7 +149,7 @@ func TestSlogJsonSourceLocWith(t *testing.T) {
 }
 
 func TestSlogCustomOptions(t *testing.T) {
-	opts := slogx.NewHandlerOptions(slog.LevelInfo, &slogx.HandlerOptions{})
+	opts := slogx.NewHandlerOptions(slog.LevelInfo, &slogx.Options{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 
@@ -145,7 +163,7 @@ func TestSlogCustomOptions(t *testing.T) {
 func TestSlogWithAtomicLevelVar(t *testing.T) {
 	lvl := &slog.LevelVar{}
 	lvl.Set(slog.LevelInfo)
-	opts := slogx.NewHandlerOptions(lvl, &slogx.HandlerOptions{})
+	opts := slogx.NewHandlerOptions(lvl, &slogx.Options{})
 	handler := slog.NewJSONHandler(os.Stderr, &opts)
 	slog.SetDefault(slog.New(handler))
 

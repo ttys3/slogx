@@ -15,7 +15,7 @@ func InitDefault() {
 // New create a new *slog.Logger with tracing handler wrapper
 func New(opts ...Option) *slog.Logger {
 	options := &options{
-		HandlerOptions: HandlerOptions{
+		Options: Options{
 			DisableSource: false,
 			FullSource:    false,
 			DisableTime:   false,
@@ -74,13 +74,13 @@ func NewHandler(options *options) slog.Handler {
 	lvl := &slog.LevelVar{}
 	lvl.Set(theLevel)
 
-	opts := NewHandlerOptions(lvl, &options.HandlerOptions)
+	opts := NewHandlerOptions(lvl, &options.Options)
 	var th slog.Handler
 	switch options.Format {
 	case "text":
 		th = slog.NewTextHandler(w, &opts)
 	case "cli":
-		th = NewCliHandler(w, &CliHandlerOptions{ColoredLevel: true})
+		th = NewCliHandler(w, &CliHandlerOptions{DisableColor: options.DisableColor, HandlerOptions: opts})
 	case "json":
 		fallthrough
 	default:
@@ -89,7 +89,7 @@ func NewHandler(options *options) slog.Handler {
 	return th
 }
 
-func NewHandlerOptions(level slog.Leveler, opt *HandlerOptions) slog.HandlerOptions {
+func NewHandlerOptions(level slog.Leveler, opt *Options) slog.HandlerOptions {
 	ho := slog.HandlerOptions{
 		AddSource: !opt.DisableSource,
 		Level:     level,

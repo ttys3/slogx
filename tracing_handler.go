@@ -60,3 +60,5 @@ func (h *TracingHandler) WithGroup(name string) slog.Handler {
 func (h *TracingHandler) Handler() slog.Handler {
 	return h.handler
 }
+
+var _ slog.Handler = (*TracingHandler)(nil)
