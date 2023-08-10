@@ -3,6 +3,8 @@ package tests
 import (
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net"
 	"os"
@@ -60,6 +62,46 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 	slog.Error("oops", "err", net.ErrClosed, "status", 500)
 	slog.LogAttrs(ctx, slog.LevelError, "oops",
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
+}
+
+func TestSSlogCliColor(t *testing.T) {
+	handler := sslog.NewCliHandler(os.Stderr, &sslog.CliHandlerOptions{
+		ColoredLevel: true,
+		HandlerOptions: slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	})
+	slog.SetDefault(slog.New(handler))
+
+	l := slog.With("name", "Al", "complex_attr", map[string]interface{}{
+		"key1": "value1",
+		"key2": 202308,
+		"key3": []string{"a", "b", "c"},
+	})
+	l.Info("hello", "age", 18)
+	group1 := l.WithGroup("group1")
+	group1.Info("group1 info")
+	slog.Error("oops", "err", net.ErrClosed, "status", 500)
+	slog.Warn("this is warning")
+	slog.Debug("this is a debug message")
+}
+
+func TestSSlogCliColorApexDemo(t *testing.T) {
+	handler := sslog.NewCliHandler(os.Stderr, &sslog.CliHandlerOptions{
+		ColoredLevel: true,
+		HandlerOptions: slog.HandlerOptions{
+			Level: slog.LevelDebug,
+		},
+	})
+	slog.SetDefault(slog.New(handler))
+
+	l := slog.With("file", "something.png", "type", "image/png", "user", "tobi")
+	l.Debug("uploading file ...")
+	l.Info("upload")
+	l.Info("upload complete")
+	l.Warn("upload retry")
+	l.With("err", errors.New("unauthorized")).Error("upload failed")
+	l.Error(fmt.Sprintf("failed to upload %s", "img.png"))
 }
 
 func TestSlogJsonWith(t *testing.T) {

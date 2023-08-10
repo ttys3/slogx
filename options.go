@@ -9,6 +9,7 @@ type HandlerOptions struct {
 	DisableSource bool
 	FullSource    bool
 	DisableTime   bool
+	ColoredLevel  bool // enable colored level
 }
 
 // options is an application options.
