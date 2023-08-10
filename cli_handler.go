@@ -123,14 +123,14 @@ func (h *CliHandler) appendAttr(buf *internal.Buffer, attr slog.Attr, theColor *
 	buf.WriteString(theColor.Sprint(attr.Key))
 	buf.Write([]byte("="))
 
-	needQuote := attr.Value.Kind() != slog.KindInt64
-	if needQuote {
-		buf.Write([]byte(`"`))
-	}
+	// needQuote := attr.Value.Kind() != slog.KindInt64
+	// if needQuote {
+	// 	buf.Write([]byte(`"`))
+	// }
 	buf.Write([]byte(attr.Value.String()))
-	if needQuote {
-		buf.Write([]byte(`"`))
-	}
+	// if needQuote {
+	// 	buf.Write([]byte(`"`))
+	// }
 }
 
 func (h *CliHandler) clone() *CliHandler {
