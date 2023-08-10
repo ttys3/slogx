@@ -64,6 +64,7 @@ func TestSlogTextLoggingWithSourceLoc(t *testing.T) {
 		slog.Int("status", 500), slog.Any("err", net.ErrClosed))
 }
 
+// go test -v -run=TestSSlogCli ./...
 func TestSSlogCliColor(t *testing.T) {
 	handler := sslog.NewCliHandler(os.Stderr, &sslog.CliHandlerOptions{
 		ColoredLevel: true,
