@@ -4,6 +4,10 @@ slog handler with opentelemetry tracing support and simple init helper method
 
 > `log/slog` stdlib requires go version >= 1.21.0
 
+added Apex log cli handler like handler (impl ref https://github.com/apex/log/blob/master/handlers/cli/cli.go)
+
+![apex cli log like handler](https://user-images.githubusercontent.com/41882455/259750348-3f9b85ff-1403-482a-acfe-a028c7551185.png)
+
 ## usage
 
 ```go
@@ -44,3 +48,14 @@ func main() {
 	log.ErrorContext(ctx, "example error", "err", io.ErrClosedPipe)
 }
 ```
+
+## related projects
+
+slog.Handler that writes tinted logs
+https://github.com/lmittmann/tint/
+
+
+Example ConsoleHandler for slog Logger
+https://gist.github.com/wijayaerick/de3de10c47a79d5310968ba5ff101a19
+
+
