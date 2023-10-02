@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	github.com/fatih/color v1.15.0
-	go.opentelemetry.io/otel v1.16.0
-	go.opentelemetry.io/otel/trace v1.16.0
+	go.opentelemetry.io/otel v1.19.0
+	go.opentelemetry.io/otel/trace v1.19.0
 )
 
 require (
